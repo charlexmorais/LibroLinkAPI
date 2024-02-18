@@ -1,27 +1,21 @@
 
-import { InterfaceCrud } from "../services/interfaces";
+import { InterfaceCrud } from "./interfaces";
 import * as bcrypt from "bcrypt";
 
-
-// criando model , interface tipo contrato  typescript com objetos
 interface UsersModel {
   usuario: string;
   senha: string;
   salt: string;
   email: string;
 }
-export class LoginServices implements InterfaceCrud<UsersModel> {
+
+export class UsersService implements InterfaceCrud<UsersModel> {
   db: any; // Conexão com o banco de dados.
+
   constructor(db: any) {
     this.db = db;
   }
-  async searchingUser (usuario:string): Promise<UsersModel | null> {
 
-    const query ="SELECT* FROM usuarios WHERE usuario =$1 "
-     const result = await this.db.query(query, [usuario]);
-    return result.rows[0] || null;
-    // result retorna objeto , onde contem  a propriedade rows
-  }
   private async createPasswordHash(
     senha: string
   ): Promise<{ passwordEncrypted: string; salt: string }> {
@@ -35,6 +29,31 @@ export class LoginServices implements InterfaceCrud<UsersModel> {
       throw new Error("Error while hashing the password.");
     }
   }
+
+  async CHECKPASSWORD(
+    usuario: UsersModel,
+    passwordUsers: string
+  ): Promise<boolean> {
+    try {
+      const { senha, salt } = usuario;
+      const result = await bcrypt.compare(passwordUsers, senha);
+      return result;
+    } catch (error) {
+      throw new Error("Error while verifying the password.");
+    }
+  }
+
+  async getByUsername(usuario: string): Promise<UsersModel | null> {
+    const query = "SELECT * FROM usuarios WHERE usuario = $1";
+    const result = await this.db.query(query, [usuario]);
+    return result.rows[0] || null;
+  }
+  async getByEmail(email: string): Promise<UsersModel | null> {
+    const query = "SELECT * FROM usuarios WHERE email = $1";
+    const result = await this.db.query(query, [email]);
+    return result.rows[0] || null;
+  }
+
   async create(payload: Omit<UsersModel, "id">): Promise<UsersModel> {
     try {
       const { usuario, senha, email } = payload;
@@ -53,12 +72,12 @@ export class LoginServices implements InterfaceCrud<UsersModel> {
       throw new Error("Error while creating the user.");
     }
   }
-  async getAll(): Promise<UsersModel[]> {
-    // fazer consulta no banco de dados
 
-    const result = await this.db.query("SELECT *FROM usuarios");
+  async getAll(): Promise<UsersModel[]> {
+    const result = await this.db.query("SELECT * FROM usuarios");
     return result.rows as UsersModel[];
   }
+
   async find(id: string): Promise<UsersModel | null> {
     try {
       const result = await this.db.query(
@@ -101,6 +120,7 @@ export class LoginServices implements InterfaceCrud<UsersModel> {
     }
   }
   
+
   async delete(id: string): Promise<void> {
     await this.db.query("DELETE FROM usuarios WHERE id = $1", [id]);
   }
