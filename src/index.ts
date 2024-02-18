@@ -17,6 +17,7 @@ dotenv.config();
 const cors = require("cors");
 // analisa os corpos das requisiçoes
 import * as bcrypt from "bcrypt";
+import { verifyToken } from "./auth/token";
 const bodyparse = require("body-parser");
 // jwt gera tokens e verifica
 const jwt = require("jsonwebtoken");
@@ -47,10 +48,10 @@ const loginservices = new LoginServices(db);
 //   // Você pode começar a executar consultas ou outras operações aqui.
 // });
 
-// // criar login para acesso na aplicacao web
-// // enviando dados usando post
+// criar login para acesso na aplicacao web
+// enviando dados usando post
 
-app.post("/login", async (req, res, next) => {
+app.post("/login", async (req, res,) => {
   try {
     const { usuario, senha } = req.body;
     const foundUser = await loginservices.searchingUser(usuario);
@@ -70,4 +71,68 @@ app.post("/login", async (req, res, next) => {
   } catch (error) {
     res.status(500).json({ error: "Erro ao tentar fazer login." });
   }
+});
+
+app.get("/usuarios",verifyToken,async (req, res) => {
+  try {
+    const usuarios = await loginservices.getAll();
+    res.json(usuarios);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/usuarios/:id",verifyToken,async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await loginservices.find(id);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/usuarios", async (req, res) => {
+  try {
+    const user = await loginservices.create(req.body);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.put("/usuarios/:id",verifyToken,async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userDataToUpdate = req.body;
+
+   
+    const existingUser = await loginservices.find(id);
+
+    if (!existingUser) {
+      return res.status(404).json({ message: "Usuário não encontrado" });
+    }
+
+
+    const updatedUser = await loginservices.update(id, userDataToUpdate);
+
+    res.json({ message: "Usuário atualizado com sucesso", user: updatedUser });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+app.delete("/usuarios/:id",verifyToken, async (req, res) => {
+
+  try {
+    const { id } = req.params;
+    await loginservices.delete(id);
+    res.json({ message: "Usuário excluído com sucesso" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.listen(port, () => {
+  console.log("server run", port);
+  
 });
