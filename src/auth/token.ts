@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-import { SECRET } from "../index";
+import { SECRET } from "../servicesUsers/app.config";
 
 
 
