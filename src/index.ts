@@ -1,6 +1,7 @@
 
 
 // index.js
+import bookRouter from "./servicesBooks/bookRouter";
 import { app, port } from "./servicesUsers/app.config";
 import loginRouter from "./servicesUsers/login.Router";
 import usuariosRouter from "./servicesUsers/userRouter";
@@ -9,6 +10,7 @@ import usuariosRouter from "./servicesUsers/userRouter";
 
 app.use("/login", loginRouter);
 app.use("/usuarios", usuariosRouter);
+app.use("/livros" , bookRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

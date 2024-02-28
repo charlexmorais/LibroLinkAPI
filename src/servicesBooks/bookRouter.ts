@@ -2,7 +2,7 @@
 import express from "express";
 
 import { verifyToken } from "../auth/token";
-import { app, db } from "./app.settings";
+import {  db } from "./app.settings";
 import { BookServices } from "./bookServices";
 const bookservices =new BookServices(db)
 const bookRouter = express.Router();
@@ -29,7 +29,8 @@ bookRouter.get("/:id", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-app.post("/usuarios", async (req, res) => {
+bookRouter.post("/", async (req, res) => {
+  // ... (lógica para criar um livro)
   try {
     const user = await bookservices.create(req.body);
     res.json(user);
@@ -37,6 +38,7 @@ app.post("/usuarios", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 bookRouter.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
