@@ -1,5 +1,5 @@
 import { InterfaceCrud } from "../servicesUsers/interfaces";
-
+// modelo de interface
 interface UsersModel {
   titulo: string;
   autor: string;
@@ -56,10 +56,9 @@ export class BookServices implements InterfaceCrud<UsersModel> {
   }
   async find(id: string): Promise<UsersModel | null> {
     try {
-      const result = await this.db.query(
-        "SELECT * FROM livros WHERE id = $1",
-        [id]
-      );
+      const result = await this.db.query("SELECT * FROM livros WHERE id = $1", [
+        id,
+      ]);
       console.log("Result:", result);
       return result.rows[0] || null;
     } catch (error) {
@@ -68,31 +67,59 @@ export class BookServices implements InterfaceCrud<UsersModel> {
     }
   }
   async update(id: string, payload: Partial<UsersModel>): Promise<UsersModel> {
-    const { titulo, autor, categoria, ano_publicacao, descricao, preco, disponivel } = payload;
-  
-    if (titulo || autor || categoria || ano_publicacao || descricao || preco || disponivel) {
+    const {
+      titulo,
+      autor,
+      categoria,
+      ano_publicacao,
+      descricao,
+      preco,
+      disponivel,
+    } = payload;
 
-      
-  
+    if (
+      titulo ||
+      autor ||
+      categoria ||
+      ano_publicacao ||
+      descricao ||
+      preco ||
+      disponivel
+    ) {
       let values;
       let query;
-  
-      if (titulo || autor || categoria || ano_publicacao || descricao || preco || disponivel) {
-        
-        values = [titulo, autor, categoria, ano_publicacao, descricao, preco, disponivel, id];
-        query = "UPDATE livros SET titulo =$1, autor =$2, categoria=$3, ano_publicacao=$4, descricao=$5, preco=$6, disponivel=$7 WHERE id = $8 RETURNING *;";
+
+      if (
+        titulo ||
+        autor ||
+        categoria ||
+        ano_publicacao ||
+        descricao ||
+        preco ||
+        disponivel
+      ) {
+        values = [
+          titulo,
+          autor,
+          categoria,
+          ano_publicacao,
+          descricao,
+          preco,
+          disponivel,
+          id,
+        ];
+        query =
+          "UPDATE livros SET titulo =$1, autor =$2, categoria=$3, ano_publicacao=$4, descricao=$5, preco=$6, disponivel=$7 WHERE id = $8 RETURNING *;";
       }
-  
+
       const result = await this.db.query(query, values);
-  
+
       return result.rows[0];
     } else {
-      
       throw new Error("Nenhum campo de atualização fornecido.");
     }
   }
   async delete(id: string): Promise<void> {
     await this.db.query("DELETE FROM livros WHERE id = $1", [id]);
   }
-  
 }
