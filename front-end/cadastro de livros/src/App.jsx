@@ -16,7 +16,7 @@ function App() {
             type="text"
             name="email"
             id="email"
-            placeholder="jonndoe@gmail.com"
+            placeholder="joaogomes@gmail.com"
           />
         </div>
 
@@ -30,7 +30,7 @@ function App() {
           />
           <i  id="loginIcon" class="material-icons toggle-password-icon icones-login" data-form-id="login">visibility_off</i>
         </div>
-        <a href="">Senha requerida</a>
+        <a href="">Esqueci a senha</a>
       </form>
       <button className="button">Entrar</button>
       <div className="footer">
