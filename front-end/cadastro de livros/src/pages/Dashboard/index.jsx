@@ -1,7 +1,7 @@
 import logo from "./assets/logo.png";
 import "./global.css";
 
-function App() {
+function LoginPage() {
   return (
     <div className="container">
       <header className="header">
@@ -46,5 +46,5 @@ function App() {
   );
 }
 
-export default App;
+export default LoginPage;
 

@@ -1,10 +1,21 @@
 import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
+import {BrowserRouter} from 'react-router-dom'
+import LoginPage from './pages/Login/Dashboard/index.jsx'
+import Routes from'./routes.jsx'
 
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+function App(){
+return (
+  <BrowserRouter>
+
+  <LoginPage/>
+  < Routes/>
+
+  </BrowserRouter>
+
+
 )
+
+
+}
+export default App;
